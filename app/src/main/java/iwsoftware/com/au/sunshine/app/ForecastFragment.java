@@ -79,7 +79,7 @@ public class ForecastFragment extends Fragment
 
   private void updateForecast()
   {
-    Log.i(ForecastFragment.class.getName(), "update forecast");
+    Log.i(ForecastFragment.class.getSimpleName(), "update forecast");
     ForecastFetcher fetcher = new ForecastFetcher();
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
     fetcher.execute(preferences.getString(getString(R.string.pref_key_location),

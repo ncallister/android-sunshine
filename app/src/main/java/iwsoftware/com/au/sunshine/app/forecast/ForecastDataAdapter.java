@@ -102,7 +102,7 @@ public class ForecastDataAdapter extends BaseAdapter
     }
     catch (ClassCastException e)
     {
-      Log.e(ForecastDataAdapter.class.getName(), "You must supply a resource ID for a TextView");
+      Log.e(ForecastDataAdapter.class.getSimpleName(), "You must supply a resource ID for a TextView");
       throw new IllegalStateException(
           "ForecastDataAdapter requires the resource ID to be a TextView", e);
     }

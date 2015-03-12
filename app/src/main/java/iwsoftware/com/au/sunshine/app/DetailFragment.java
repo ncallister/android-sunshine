@@ -1,10 +1,16 @@
 package iwsoftware.com.au.sunshine.app;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,24 +30,35 @@ import iwsoftware.com.au.sunshine.app.forecast.ForecastRenderer;
  */
 public class DetailFragment extends Fragment
 {
-
   private Map<String, Drawable> art = null;
+  private ShareActionProvider shareActionProvider = null;
+  private ForecastData forecast = null;
 
   public DetailFragment()
   {
   }
 
   @Override
+  public void onCreate(Bundle savedInstanceState)
+  {
+    super.onCreate(savedInstanceState);
+    super.setHasOptionsMenu(true);
+  }
+
+  @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
   {
+    Log.v(DetailFragment.class.getSimpleName(), "onCreateView");
     View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
     initArt();
 
     BundleForecastDataCodec forecastCodec = new BundleForecastDataCodec();
-    ForecastData data = forecastCodec.decode(getActivity().getIntent().getBundleExtra(
+    forecast = forecastCodec.decode(getActivity().getIntent().getBundleExtra(
         BundleForecastDataCodec.INTENT_EXTRA_FORECAST_DATA));
-    displayForecast(data, rootView);
+    displayForecast(forecast, rootView);
+
+    updateShare();
 
     return rootView;
   }
@@ -59,6 +76,34 @@ public class DetailFragment extends Fragment
       art.put("light rain", res.getDrawable(R.drawable.art_light_rain));
       art.put("snow", res.getDrawable(R.drawable.art_snow));
       art.put("storm", res.getDrawable(R.drawable.art_storm));
+    }
+  }
+
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+  {
+    Log.v(DetailFragment.class.getSimpleName(), "onCreateOptionsMenu");
+    // Inflate the menu; this adds items to the action bar if it is present.
+    inflater.inflate(R.menu.menu_detail_fragment, menu);
+
+    shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
+        menu.findItem(R.id.action_share));
+
+    updateShare();
+  }
+
+  private void updateShare()
+  {
+    if (shareActionProvider != null && forecast != null)
+    {
+      ForecastRenderer renderer = ForecastRenderer.getRenderer(getActivity());
+
+      Intent shareIntent = new Intent(Intent.ACTION_SEND);
+      shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+      shareIntent.setType("text/plain");
+      shareIntent.putExtra(Intent.EXTRA_TEXT,
+                           renderer.renderSummary(getActivity(), forecast, 1) + " #SunshineApp");
+      shareActionProvider.setShareIntent(shareIntent);
     }
   }
 

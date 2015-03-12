@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity
     String location = PreferenceManager.getDefaultSharedPreferences(this).getString(
         getString(R.string.pref_key_location), getString(R.string.pref_default_location));
     Intent mapIntent = new Intent(Intent.ACTION_VIEW);
-    Uri locationUri = Uri.parse(String.format("geo:0,0?q=%s", location));
+    Uri locationUri = Uri.parse("geo:0,0").buildUpon().appendQueryParameter("q", location).build();
     mapIntent.setData(locationUri);
     if (mapIntent.resolveActivity(getPackageManager()) != null)
     {

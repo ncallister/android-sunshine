@@ -85,7 +85,7 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
     }
     catch (IOException e)
     {
-      Log.e(GetForecastAsyncTask.class.getName(), "Error ", e);
+      Log.e(GetForecastAsyncTask.class.getSimpleName(), "Error ", e);
       // If the code didn't successfully get the weather data, there's no point in attempting
       // to parse it.
       forecastJsonStr = null;
@@ -104,7 +104,7 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
         }
         catch (final IOException e)
         {
-          Log.e(GetForecastAsyncTask.class.getName(), "Error closing stream", e);
+          Log.e(GetForecastAsyncTask.class.getSimpleName(), "Error closing stream", e);
         }
       }
     }
@@ -118,7 +118,7 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
     }
     catch (JSONException e)
     {
-      Log.e(GetForecastAsyncTask.class.getName(), "Error parsing JSON data", e);
+      Log.e(GetForecastAsyncTask.class.getSimpleName(), "Error parsing JSON data", e);
     }
     return new ArrayList<ForecastData>();
   }
