@@ -1,4 +1,4 @@
-package iwsoftware.com.au.sunshine.app;
+package au.com.iwsoftware.sunshine.app;
 
 import android.os.Bundle;
 import android.preference.ListPreference;

@@ -1,4 +1,4 @@
-package iwsoftware.com.au.sunshine.app.forecast;
+package au.com.iwsoftware.sunshine.app.forecast;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 
 import java.text.SimpleDateFormat;
 
-import iwsoftware.com.au.sunshine.app.R;
+import au.com.iwsoftware.sunshine.app.R;
 
 /**
  *

@@ -1,53 +1,35 @@
-package iwsoftware.com.au.sunshine.app;
+package au.com.iwsoftware.sunshine.app;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity
+public class DetailActivity extends ActionBarActivity
 {
+
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    setContentView(R.layout.activity_detail);
     if (savedInstanceState == null)
     {
       getSupportFragmentManager().beginTransaction()
-          .add(R.id.container, new ForecastFragment())
+          .add(R.id.container, new DetailFragment())
           .commit();
     }
   }
+
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
     // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.menu, menu);
+    getMenuInflater().inflate(R.menu.menu_detail, menu);
     return true;
-  }
-
-  private void launchMap()
-  {
-    String location = PreferenceManager.getDefaultSharedPreferences(this).getString(
-        getString(R.string.pref_key_location), getString(R.string.pref_default_location));
-    Intent mapIntent = new Intent(Intent.ACTION_VIEW);
-    Uri locationUri = Uri.parse("geo:0,0").buildUpon().appendQueryParameter("q", location).build();
-    mapIntent.setData(locationUri);
-    if (mapIntent.resolveActivity(getPackageManager()) != null)
-    {
-      startActivity(mapIntent);
-    }
-    else
-    {
-      Toast.makeText(this, getString(R.string.error_no_maps), Toast.LENGTH_SHORT).show();
-    }
   }
 
   @Override
@@ -62,11 +44,6 @@ public class MainActivity extends ActionBarActivity
     if (id == R.id.action_settings)
     {
       startActivity(new Intent(this, SettingsActivity.class));
-      return true;
-    }
-    else if (id == R.id.action_view_map)
-    {
-      launchMap();
       return true;
     }
 

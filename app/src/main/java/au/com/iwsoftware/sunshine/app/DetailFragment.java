@@ -1,4 +1,4 @@
-package iwsoftware.com.au.sunshine.app;
+package au.com.iwsoftware.sunshine.app;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -21,9 +21,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import iwsoftware.com.au.sunshine.app.forecast.BundleForecastDataCodec;
-import iwsoftware.com.au.sunshine.app.forecast.ForecastData;
-import iwsoftware.com.au.sunshine.app.forecast.ForecastRenderer;
+import au.com.iwsoftware.sunshine.app.forecast.BundleForecastDataCodec;
+import au.com.iwsoftware.sunshine.app.forecast.ForecastData;
+import au.com.iwsoftware.sunshine.app.forecast.ForecastRenderer;
 
 /**
  * A placeholder fragment containing a simple view.

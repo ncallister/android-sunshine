@@ -1,4 +1,4 @@
-package iwsoftware.com.au.sunshine.app.forecast;
+package au.com.iwsoftware.sunshine.app.forecast;
 
 import org.json.JSONArray;
 import org.json.JSONException;

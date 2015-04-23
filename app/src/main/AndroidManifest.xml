@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="iwsoftware.com.au.sunshine.app" >
+    package="au.com.iwsoftware.sunshine.app" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -24,7 +24,7 @@
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="iwsoftware.com.au.sunshine.app.MainActivity" />
+                android:value="au.com.iwsoftware.sunshine.app.MainActivity" />
         </activity>
         <activity
             android:name=".SettingsActivity"
@@ -32,7 +32,7 @@
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="iwsoftware.com.au.sunshine.app.MainActivity" />
+                android:value="au.com.iwsoftware.sunshine.app.MainActivity" />
         </activity>
     </application>
 

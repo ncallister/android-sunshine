@@ -1,4 +1,4 @@
-package iwsoftware.com.au.sunshine.app;
+package au.com.iwsoftware.sunshine.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,9 +18,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import iwsoftware.com.au.sunshine.app.forecast.BundleForecastDataCodec;
-import iwsoftware.com.au.sunshine.app.forecast.ForecastData;
-import iwsoftware.com.au.sunshine.app.forecast.ForecastDataAdapter;
+import au.com.iwsoftware.sunshine.app.forecast.BundleForecastDataCodec;
+import au.com.iwsoftware.sunshine.app.forecast.ForecastData;
+import au.com.iwsoftware.sunshine.app.forecast.ForecastDataAdapter;
 
 /**
  * A placeholder fragment containing a simple view.

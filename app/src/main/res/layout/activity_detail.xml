@@ -3,5 +3,5 @@
              android:id="@+id/container"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="iwsoftware.com.au.sunshine.app.DetailActivity"
+             tools:context="au.com.iwsoftware.sunshine.app.DetailActivity"
              tools:ignore="MergeRootFrame"/>

@@ -1,4 +1,4 @@
-package iwsoftware.com.au.sunshine.app;
+package au.com.iwsoftware.sunshine.app;
 
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -16,8 +16,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import iwsoftware.com.au.sunshine.app.forecast.ForecastData;
-import iwsoftware.com.au.sunshine.app.forecast.JSONForecastDecoder;
+import au.com.iwsoftware.sunshine.app.forecast.ForecastData;
+import au.com.iwsoftware.sunshine.app.forecast.JSONForecastDecoder;
 
 /**
  *
