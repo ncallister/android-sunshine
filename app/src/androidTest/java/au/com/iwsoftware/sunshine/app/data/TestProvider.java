@@ -70,7 +70,7 @@ public class TestProvider extends AndroidTestCase
     );
     assertEquals("Error: Records not deleted from Weather table during delete", 0,
                  cursor.getCount());
-    cursor.close();
+//    cursor.close();
 
     cursor = mContext.getContentResolver().query(
         WeatherContract.LocationEntry.CONTENT_URI,
@@ -81,7 +81,7 @@ public class TestProvider extends AndroidTestCase
     );
     assertEquals("Error: Records not deleted from Location table during delete", 0,
                  cursor.getCount());
-    cursor.close();
+//    cursor.close();
   }
 
   /*

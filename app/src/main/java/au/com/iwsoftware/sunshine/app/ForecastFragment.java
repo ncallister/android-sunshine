@@ -3,6 +3,7 @@ package au.com.iwsoftware.sunshine.app;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,11 +17,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import au.com.iwsoftware.sunshine.app.data.WeatherContract;
 import au.com.iwsoftware.sunshine.app.forecast.BundleForecastDataCodec;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastData;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastDataAdapter;
+import au.com.iwsoftware.sunshine.app.forecast.ForecastDataAdapterUriObserver;
+import au.com.iwsoftware.sunshine.app.openweather.GetForecastAsyncTask;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -29,6 +32,7 @@ public class ForecastFragment extends Fragment
 {
   private View rootView;
   private ForecastDataAdapter forecastDataAdapter;
+  private ForecastDataAdapterUriObserver forecastObserver;
 
   public ForecastFragment()
   {
@@ -67,6 +71,14 @@ public class ForecastFragment extends Fragment
       }
     });
 
+    forecastObserver = new ForecastDataAdapterUriObserver(getContext().getContentResolver(),
+                                                          new Handler(),
+                                                          forecastDataAdapter);
+    // Register to receive change events
+    forecastObserver.registerUri(WeatherContract.WeatherEntry.CONTENT_URI);
+    // Perform an initial load of the data from the DB
+    forecastObserver.updateAdapter(WeatherContract.WeatherEntry.CONTENT_URI);
+
     return rootView;
   }
 
@@ -80,10 +92,12 @@ public class ForecastFragment extends Fragment
   private void updateForecast()
   {
     Log.i(ForecastFragment.class.getSimpleName(), "update forecast");
-    ForecastFetcher fetcher = new ForecastFetcher();
+
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    fetcher.execute(preferences.getString(getString(R.string.pref_key_location),
-                                          getString(R.string.pref_default_location)));
+
+    new GetForecastAsyncTask(getContext().getContentResolver()).execute(
+        preferences.getString(getString(R.string.pref_key_location),
+                              getString(R.string.pref_default_location)));
   }
 
   @Override
@@ -109,18 +123,5 @@ public class ForecastFragment extends Fragment
     }
 
     return super.onOptionsItemSelected(item);
-  }
-
-  private class ForecastFetcher extends GetForecastAsyncTask
-  {
-    @Override
-    protected void onPostExecute(List<ForecastData> forecasts)
-    {
-      forecastDataAdapter.clear();
-      for (ForecastData data : forecasts)
-      {
-        forecastDataAdapter.add(data);
-      }
-    }
   }
 }

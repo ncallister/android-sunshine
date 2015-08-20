@@ -2,13 +2,18 @@ package au.com.iwsoftware.sunshine.app.forecast;
 
 import java.text.SimpleDateFormat;
 
+import au.com.iwsoftware.sunshine.app.location.Location;
+
 /**
  *
  */
 public class ForecastData
 {
+  private Location location;
+
   private long timestamp;
   private String weatherDescription;
+  private int weatherId;
   private double maxKelvin;
   private double minKelvin;
   private double pressure;
@@ -136,5 +141,25 @@ public class ForecastData
   public void setWindDir(int windDir)
   {
     this.windDir = windDir;
+  }
+
+  public Location getLocation()
+  {
+    return location;
+  }
+
+  public void setLocation(Location location)
+  {
+    this.location = new Location(location);
+  }
+
+  public int getWeatherId()
+  {
+    return weatherId;
+  }
+
+  public void setWeatherId(int weatherId)
+  {
+    this.weatherId = weatherId;
   }
 }

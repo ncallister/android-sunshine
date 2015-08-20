@@ -1,5 +1,8 @@
-package au.com.iwsoftware.sunshine.app;
+package au.com.iwsoftware.sunshine.app.openweather;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -16,14 +19,35 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import au.com.iwsoftware.sunshine.app.data.WeatherContract;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastData;
 import au.com.iwsoftware.sunshine.app.forecast.JSONForecastDecoder;
+import au.com.iwsoftware.sunshine.app.forecast.WeatherDbForecastDataCodec;
+import au.com.iwsoftware.sunshine.app.location.Location;
+import au.com.iwsoftware.sunshine.app.location.LocationDbLocationCodec;
 
 /**
  *
  */
 public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastData>>
 {
+  private ContentResolver contentResolver;
+
+  private JSONForecastDecoder forecastDecoder;
+
+  private WeatherDbForecastDataCodec forecastCodec;
+  private LocationDbLocationCodec locationCodec;
+
+  public GetForecastAsyncTask(ContentResolver context)
+  {
+    this.contentResolver = context;
+
+    this.forecastDecoder = new JSONForecastDecoder();
+
+    this.forecastCodec = new WeatherDbForecastDataCodec();
+    this.locationCodec = new LocationDbLocationCodec();
+  }
+
   @Override
   protected List<ForecastData> doInBackground(String... params)
   {
@@ -35,6 +59,8 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
     // Will contain the raw JSON response as a string.
     String forecastJsonStr = null;
 
+    String locationSetting = TextUtils.join(",", params);
+
     try
     {
       // Construct the URL for the OpenWeatherMap query
@@ -44,7 +70,7 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
       uriBuilder.scheme("http");
       uriBuilder.authority("api.openweathermap.org");
       uriBuilder.path("data/2.5/forecast/daily");
-      uriBuilder.appendQueryParameter("q", TextUtils.join(",", params));
+      uriBuilder.appendQueryParameter("q", locationSetting);
       uriBuilder.appendQueryParameter("mode", "json");
       uriBuilder.appendQueryParameter("units", "metric");
       uriBuilder.appendQueryParameter("cnt", "7");
@@ -113,13 +139,72 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
     {
       if (forecastJsonStr != null)
       {
-        return new JSONForecastDecoder().parseForecast(forecastJsonStr);
+        return forecastDecoder.parseForecast(forecastJsonStr, locationSetting);
       }
     }
     catch (JSONException e)
     {
       Log.e(GetForecastAsyncTask.class.getSimpleName(), "Error parsing JSON data", e);
     }
-    return new ArrayList<ForecastData>();
+    return new ArrayList<>();
+  }
+
+  void syncLocationToDatabase(Location location)
+  {
+    Cursor cursor = contentResolver.query(
+        WeatherContract.LocationEntry.CONTENT_URI,
+        new String[]
+            {
+                WeatherContract.LocationEntry._ID,
+            },
+        WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + "=? ",
+        new String[]
+            {
+                location.getLocationSetting(),
+            },
+        null);
+    try
+    {
+      if (cursor.moveToFirst())
+      {
+        location.setDatabaseID(cursor.getLong(cursor.getColumnIndex(
+            WeatherContract.LocationEntry._ID)));
+      }
+      else
+      {
+        Uri locationUri = contentResolver.insert(
+            WeatherContract.LocationEntry.CONTENT_URI, locationCodec.encode(location));
+
+        long locationRowId = ContentUris.parseId(locationUri);
+        location.setDatabaseID(locationRowId);
+      }
+    }
+    finally
+    {
+      if (cursor != null)
+      {
+        cursor.close();
+      }
+    }
+  }
+
+  @Override
+  protected void onPostExecute(List<ForecastData> forecasts)
+  {
+    for (ForecastData forecast : forecasts)
+    {
+      syncLocationToDatabase(forecast.getLocation());
+    }
+
+    // Delete all current forecasts
+    contentResolver.delete(
+        WeatherContract.WeatherEntry.CONTENT_URI,
+        null,
+        null
+    );
+
+    // Add in the new ones
+    contentResolver.bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI,
+                                            forecastCodec.encodeAll(forecasts));
   }
 }

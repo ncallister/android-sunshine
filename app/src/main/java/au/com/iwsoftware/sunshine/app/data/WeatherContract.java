@@ -92,6 +92,11 @@ public class WeatherContract
     {
       return ContentUris.withAppendedId(CONTENT_URI, id);
     }
+
+    public static long getLocationIdFromUri(Uri uri)
+    {
+      return ContentUris.parseId(uri);
+    }
   }
 
   /* Inner class that defines the table contents of the weather table */
@@ -119,7 +124,7 @@ public class WeatherContract
     // e.g "clear" vs "sky is clear".
     public static final String COLUMN_SHORT_DESC = "short_desc";
 
-    // Min and max temperatures for the day (stored as floats)
+    // Min and max temperatures for the day (in degrees K stored as floats)
     public static final String COLUMN_MIN_TEMP = "min";
     public static final String COLUMN_MAX_TEMP = "max";
 

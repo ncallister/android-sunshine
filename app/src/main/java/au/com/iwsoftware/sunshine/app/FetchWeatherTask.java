@@ -18,6 +18,7 @@ package au.com.iwsoftware.sunshine.app;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -43,7 +44,6 @@ import au.com.iwsoftware.sunshine.app.data.WeatherContract;
 
 public class FetchWeatherTask extends AsyncTask<String, Void, String[]>
 {
-
   private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
   private ArrayAdapter<String> mForecastAdapter;
@@ -114,10 +114,42 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]>
    */
   long addLocation(String locationSetting, String cityName, double lat, double lon)
   {
-    // Students: First, check if the location with this city name exists in the db
-    // If it exists, return the current ID
-    // Otherwise, insert it using the content resolver and the base URI
-    return -1;
+    Cursor cursor = mContext.getContentResolver().query(
+        WeatherContract.LocationEntry.CONTENT_URI,
+        new String[]
+        {
+            WeatherContract.LocationEntry._ID,
+        },
+        WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + "=? ",
+        new String[]
+        {
+            locationSetting,
+        },
+        null);
+    long locationId;
+
+    if (!cursor.moveToFirst())
+    {
+//      cursor.close();
+      ContentValues values = new ContentValues();
+      values.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, locationSetting);
+      values.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, cityName);
+      values.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT, lat);
+      values.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, lon);
+
+      Uri newLocationUri = mContext.getContentResolver().insert(
+          WeatherContract.LocationEntry.CONTENT_URI, values);
+      cursor = mContext.getContentResolver().query(newLocationUri,
+                                                   new String[]
+                                                   {
+                                                     WeatherContract.LocationEntry._ID,
+                                                   }, null, null, null);
+      cursor.moveToFirst();
+    }
+    locationId = cursor.getLong(cursor.getColumnIndex(WeatherContract.LocationEntry._ID));
+//    cursor.close();
+
+    return locationId;
   }
 
   /*

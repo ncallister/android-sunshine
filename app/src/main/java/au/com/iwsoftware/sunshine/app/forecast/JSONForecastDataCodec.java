@@ -19,6 +19,7 @@ public class JSONForecastDataCodec
   public static final String LABEL_HUMIDITY = "humidity";
   public static final String LABEL_WEATHER_OBJECT = "weather";
   public static final String LABEL_WEATHER_DESCRIPTION = "main";
+  public static final String LABEL_WEATHER_ID = "id";
   public static final String LABEL_WIND_SPEED = "speed";
   public static final String LABEL_WIND_DIRECTION = "deg";
 
@@ -47,6 +48,7 @@ public class JSONForecastDataCodec
   private void parseWeatherData(ForecastData data, JSONObject weather) throws JSONException
   {
     data.setWeatherDescription(weather.getString(LABEL_WEATHER_DESCRIPTION));
+    data.setWeatherId(weather.getInt(LABEL_WEATHER_ID));
   }
 
   public JSONObject encodeForecast(ForecastData data) throws JSONException
@@ -82,5 +84,6 @@ public class JSONForecastDataCodec
   private void encodeWeatherData(ForecastData data, JSONObject weather) throws JSONException
   {
     weather.put(LABEL_WEATHER_DESCRIPTION, data.getWeatherDescription());
+    weather.put(LABEL_WEATHER_ID, data.getWeatherId());
   }
 }
