@@ -19,8 +19,34 @@ public class WeatherDbForecastDataCodec
 {
   private static final Map<String, FieldCodec> fields = new HashMap<>();
 
+  public static final List<String> PROJECTION = new ArrayList<String>();
+
   static
   {
+    PROJECTION.add(WeatherContract.WeatherEntry.TABLE_NAME + "." +
+                       WeatherContract.WeatherEntry._ID + " AS " +
+                       WeatherContract.WeatherEntry._ID_EXPLICIT);
+    fields.put(WeatherContract.WeatherEntry._ID_EXPLICIT,
+               new FieldCodec()
+               {
+                 @Override
+                 public void encode(ForecastData data, ContentValues values)
+                 {
+                   if (data.getDatabaseId() != ForecastData.DATABASE_ID_UNKNOWN)
+                   {
+                     values.put(WeatherContract.WeatherEntry._ID, data.getDatabaseId());
+                   }
+                 }
+
+                 @Override
+                 public void decode(Cursor dbCursor, int columnIndex, ForecastData data,
+                                    ContentResolver contentResolver)
+                 {
+                   data.setDatabaseId(dbCursor.getInt(columnIndex));
+                 }
+               });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_DATE);
     fields.put(WeatherContract.WeatherEntry.COLUMN_DATE,
                new FieldCodec()
                {
@@ -37,6 +63,8 @@ public class WeatherDbForecastDataCodec
                    data.setTimestamp(dbCursor.getLong(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC);
     fields.put(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
                new FieldCodec()
                {
@@ -54,6 +82,8 @@ public class WeatherDbForecastDataCodec
                    data.setWeatherDescription(dbCursor.getString(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP);
     fields.put(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
                new FieldCodec()
                {
@@ -70,6 +100,8 @@ public class WeatherDbForecastDataCodec
                    data.setMaxKelvin(dbCursor.getDouble(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP);
     fields.put(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
                new FieldCodec()
                {
@@ -86,6 +118,8 @@ public class WeatherDbForecastDataCodec
                    data.setMinKelvin(dbCursor.getDouble(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_PRESSURE);
     fields.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE,
                new FieldCodec()
                {
@@ -102,6 +136,8 @@ public class WeatherDbForecastDataCodec
                    data.setPressure(dbCursor.getDouble(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_HUMIDITY);
     fields.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
                new FieldCodec()
                {
@@ -119,6 +155,8 @@ public class WeatherDbForecastDataCodec
                    data.setHumidity((int) dbCursor.getDouble(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED);
     fields.put(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
                new FieldCodec()
                {
@@ -135,6 +173,8 @@ public class WeatherDbForecastDataCodec
                    data.setWindSpeed((int) dbCursor.getDouble(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_DEGREES);
     fields.put(WeatherContract.WeatherEntry.COLUMN_DEGREES,
                new FieldCodec()
                {
@@ -151,6 +191,8 @@ public class WeatherDbForecastDataCodec
                    data.setWindDir(dbCursor.getInt(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_LOC_KEY);
     fields.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY,
                new FieldCodec()
                {
@@ -185,6 +227,8 @@ public class WeatherDbForecastDataCodec
                    }
                  }
                });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID);
     fields.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
                new FieldCodec()
                {
@@ -254,6 +298,15 @@ public class WeatherDbForecastDataCodec
     }
 
     return allData;
+  }
+
+  public static String[] getFullProjection()
+  {
+    List<String> projection = new ArrayList<String>();
+    projection.addAll(WeatherDbForecastDataCodec.PROJECTION);
+    projection.addAll(LocationDbLocationCodec.PROJECTION);
+    String[] fullProjection = new String[projection.size()];
+    return projection.toArray(fullProjection);
   }
 
   private static abstract class FieldCodec

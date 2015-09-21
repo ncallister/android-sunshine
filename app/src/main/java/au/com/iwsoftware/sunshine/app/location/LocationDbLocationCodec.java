@@ -17,8 +17,11 @@ public class LocationDbLocationCodec
 {
   private static final Map<String, FieldCodec> fields = new HashMap<>();
 
+  public static final List<String> PROJECTION = new ArrayList<String>();
+
   static
   {
+    PROJECTION.add(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING);
     fields.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
                new FieldCodec()
                {
@@ -35,6 +38,9 @@ public class LocationDbLocationCodec
                    location.setLocationSetting(dbCursor.getString(columnIndex));
                  }
                });
+
+
+    PROJECTION.add(WeatherContract.LocationEntry.COLUMN_CITY_NAME);
     fields.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME,
                new FieldCodec()
                {
@@ -51,6 +57,8 @@ public class LocationDbLocationCodec
                    location.setCityName(dbCursor.getString(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.LocationEntry.COLUMN_COORD_LAT);
     fields.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT,
                new FieldCodec()
                {
@@ -67,6 +75,8 @@ public class LocationDbLocationCodec
                    location.setLatitude(dbCursor.getDouble(columnIndex));
                  }
                });
+
+    PROJECTION.add(WeatherContract.LocationEntry.COLUMN_COORD_LONG);
     fields.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG,
                new FieldCodec()
                {
@@ -83,7 +93,11 @@ public class LocationDbLocationCodec
                    location.setLongitude(dbCursor.getDouble(columnIndex));
                  }
                });
-    fields.put(WeatherContract.LocationEntry._ID,
+
+    PROJECTION.add(WeatherContract.LocationEntry.TABLE_NAME + "." +
+                       WeatherContract.LocationEntry._ID + " AS " +
+                       WeatherContract.LocationEntry._ID_EXPLICIT);
+    fields.put(WeatherContract.LocationEntry._ID_EXPLICIT,
                new FieldCodec()
                {
                  @Override

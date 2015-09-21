@@ -31,6 +31,7 @@ public class WeatherProvider extends ContentProvider
   private WeatherDbHelper mOpenHelper;
 
   static final int WEATHER = 100;
+  static final int WEATHER_WITH_ID = 103;
   static final int WEATHER_WITH_LOCATION = 101;
   static final int WEATHER_WITH_LOCATION_AND_DATE = 102;
   static final int LOCATION = 300;
@@ -63,6 +64,10 @@ public class WeatherProvider extends ContentProvider
   //date >= ?
   private static final String sStartDateSelection =
       WeatherContract.WeatherEntry.COLUMN_DATE + " >= ? ";
+
+  //weather._id >= ?
+  private static final String sWeatherIDSelection =
+      WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID + " = ? ";
 
   //location.location_setting = ?
   private static final String sLocationSettingSelection =
@@ -138,6 +143,18 @@ public class WeatherProvider extends ContentProvider
     );
   }
 
+  private Cursor getWeatherById(Uri uri, String[] projection, String sortOrder)
+  {
+    long weatherId = WeatherContract.WeatherEntry.getWeatherIdFromUri(uri);
+    return sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                                                       projection,
+                                                       sWeatherIDSelection,
+                                                       new String[]{String.valueOf(weatherId)},
+                                                       null,
+                                                       null,
+                                                       sortOrder);
+  }
+
   private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder)
   {
     String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
@@ -194,6 +211,9 @@ public class WeatherProvider extends ContentProvider
     matcher.addURI(WeatherContract.CONTENT_AUTHORITY,
                    WeatherContract.PATH_WEATHER,
                    WEATHER);
+    matcher.addURI(WeatherContract.CONTENT_AUTHORITY,
+                   WeatherContract.PATH_WEATHER + "/#",
+                   WEATHER_WITH_ID);
     matcher.addURI(WeatherContract.CONTENT_AUTHORITY,
                    WeatherContract.PATH_WEATHER + "/*",
                    WEATHER_WITH_LOCATION);
@@ -267,6 +287,12 @@ public class WeatherProvider extends ContentProvider
       case WEATHER_WITH_LOCATION:
       {
         retCursor = getWeatherByLocationSetting(uri, projection, sortOrder);
+        break;
+      }
+      // "weather/#"
+      case WEATHER_WITH_ID:
+      {
+        retCursor = getWeatherById(uri, projection, sortOrder);
         break;
       }
       // "weather"

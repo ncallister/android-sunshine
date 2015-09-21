@@ -3,7 +3,6 @@ package au.com.iwsoftware.sunshine.app;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,10 +18,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import au.com.iwsoftware.sunshine.app.data.WeatherContract;
-import au.com.iwsoftware.sunshine.app.forecast.BundleForecastDataCodec;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastData;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastDataAdapter;
-import au.com.iwsoftware.sunshine.app.forecast.ForecastDataAdapterUriObserver;
+import au.com.iwsoftware.sunshine.app.forecast.ForecastDataCursorLoader;
 import au.com.iwsoftware.sunshine.app.openweather.GetForecastAsyncTask;
 
 /**
@@ -32,7 +30,7 @@ public class ForecastFragment extends Fragment
 {
   private View rootView;
   private ForecastDataAdapter forecastDataAdapter;
-  private ForecastDataAdapterUriObserver forecastObserver;
+  private ForecastDataCursorLoader loader;
 
   public ForecastFragment()
   {
@@ -63,23 +61,25 @@ public class ForecastFragment extends Fragment
       public void onItemClick(AdapterView<?> parent, View view, int position, long id)
       {
         Intent displayDetailIntent = new Intent(getActivity(), DetailActivity.class);
-        BundleForecastDataCodec codec = new BundleForecastDataCodec();
         ForecastData data = forecastDataAdapter.getItem(position);
-        displayDetailIntent.putExtra(BundleForecastDataCodec.INTENT_EXTRA_FORECAST_DATA,
-                                     codec.encode(data));
+        displayDetailIntent.setData(
+            WeatherContract.WeatherEntry.buildWeatherUri(data.getDatabaseId()));
         getActivity().startActivity(displayDetailIntent);
       }
     });
 
-    forecastObserver = new ForecastDataAdapterUriObserver(getContext().getContentResolver(),
-                                                          new Handler(),
-                                                          forecastDataAdapter);
-    // Register to receive change events
-    forecastObserver.registerUri(WeatherContract.WeatherEntry.CONTENT_URI);
-    // Perform an initial load of the data from the DB
-    forecastObserver.updateAdapter(WeatherContract.WeatherEntry.CONTENT_URI);
+    loader = new ForecastDataCursorLoader(getContext(), getLoaderManager(),
+                                          WeatherContract.WeatherEntry.CONTENT_URI,
+                                          forecastDataAdapter);
+    loader.initLoader();
 
     return rootView;
+  }
+
+  @Override
+  public void onDestroyView()
+  {
+    super.onDestroyView();
   }
 
   @Override

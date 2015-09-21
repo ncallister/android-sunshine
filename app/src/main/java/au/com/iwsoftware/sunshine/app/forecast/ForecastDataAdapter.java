@@ -1,6 +1,7 @@
 package au.com.iwsoftware.sunshine.app.forecast;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +23,8 @@ public class ForecastDataAdapter extends BaseAdapter
   private int resource;
   private Context context;
 
-  public ForecastDataAdapter(Context context, int resource, int textViewResourceId, List<ForecastData> objects)
-  {
-    init(context, resource, textViewResourceId, objects);
-  }
-
-  private void init(Context context, int resource, int textViewResourceId, List<ForecastData> objects)
+  public ForecastDataAdapter(Context context, int resource, int textViewResourceId,
+                             List<ForecastData> objects)
   {
     inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     data = objects;
@@ -60,10 +57,24 @@ public class ForecastDataAdapter extends BaseAdapter
     notifyDataSetChanged();
   }
 
+  public void addAll(List<ForecastData> newData)
+  {
+    data.addAll(newData);
+    notifyDataSetChanged();
+  }
+
   public void add(ForecastData forecast)
   {
     data.add(forecast);
     notifyDataSetChanged();
+  }
+
+  public void updateFromCursor(Cursor cursor)
+  {
+    WeatherDbForecastDataCodec codec = new WeatherDbForecastDataCodec();
+    List<ForecastData> allData = codec.decodeAll(cursor, context.getContentResolver());
+    clear();
+    addAll(allData);
   }
 
   @Override

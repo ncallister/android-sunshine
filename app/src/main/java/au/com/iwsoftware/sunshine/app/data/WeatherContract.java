@@ -75,6 +75,8 @@ public class WeatherContract
 
     public static final String TABLE_NAME = "location";
 
+    public static final String _ID_EXPLICIT = _ID + "_" + TABLE_NAME;
+
     // The location setting string is what will be sent to openweathermap
     // as the location query.
     public static final String COLUMN_LOCATION_SETTING = "location_setting";
@@ -113,6 +115,8 @@ public class WeatherContract
 
     public static final String TABLE_NAME = "weather";
 
+    public static final String _ID_EXPLICIT = _ID + "_" + TABLE_NAME;
+
     // Column with the foreign key into the location table.
     public static final String COLUMN_LOC_KEY = "location_id";
     // Date, stored as long in milliseconds since the epoch
@@ -143,6 +147,11 @@ public class WeatherContract
     public static Uri buildWeatherUri(long id)
     {
       return ContentUris.withAppendedId(CONTENT_URI, id);
+    }
+
+    public static long getWeatherIdFromUri(Uri uri)
+    {
+      return ContentUris.parseId(uri);
     }
 
     public static Uri buildWeatherLocation(String locationSetting)

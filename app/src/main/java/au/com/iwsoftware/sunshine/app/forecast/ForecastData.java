@@ -11,6 +11,7 @@ public class ForecastData
 {
   private Location location;
 
+  private int databaseId = DATABASE_ID_UNKNOWN;
   private long timestamp;
   private String weatherDescription;
   private int weatherId;
@@ -23,6 +24,8 @@ public class ForecastData
 
   private static final double ZERO_C_IN_K = 273.15;
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, MMM dd");
+
+  public static final int DATABASE_ID_UNKNOWN = -1;
 
   public long getTimestamp()
   {
@@ -161,5 +164,15 @@ public class ForecastData
   public void setWeatherId(int weatherId)
   {
     this.weatherId = weatherId;
+  }
+
+  public int getDatabaseId()
+  {
+    return databaseId;
+  }
+
+  public void setDatabaseId(int databaseId)
+  {
+    this.databaseId = databaseId;
   }
 }

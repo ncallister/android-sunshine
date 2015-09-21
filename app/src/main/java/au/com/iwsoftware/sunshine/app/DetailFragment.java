@@ -2,7 +2,9 @@ package au.com.iwsoftware.sunshine.app;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -21,9 +23,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import au.com.iwsoftware.sunshine.app.forecast.BundleForecastDataCodec;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastData;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastRenderer;
+import au.com.iwsoftware.sunshine.app.forecast.WeatherDbForecastDataCodec;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -53,14 +55,31 @@ public class DetailFragment extends Fragment
 
     initArt();
 
-    BundleForecastDataCodec forecastCodec = new BundleForecastDataCodec();
-    forecast = forecastCodec.decode(getActivity().getIntent().getBundleExtra(
-        BundleForecastDataCodec.INTENT_EXTRA_FORECAST_DATA));
+    forecast = getForecastData();
     displayForecast(forecast, rootView);
 
     updateShare();
 
     return rootView;
+  }
+
+  private ForecastData getForecastData()
+  {
+    Uri forecastUri = getActivity().getIntent().getData();
+    Log.d(DetailFragment.class.getName(), "URI: " + forecast);
+    WeatherDbForecastDataCodec codec = new WeatherDbForecastDataCodec();
+    Cursor cursor = getContext().getContentResolver().query(forecastUri,
+                                                            WeatherDbForecastDataCodec.getFullProjection(),
+                                                            null, null, null);
+    try
+    {
+      cursor.moveToFirst();
+      return codec.decode(cursor, getContext().getContentResolver());
+    }
+    finally
+    {
+      cursor.close();
+    }
   }
 
   private void initArt()
