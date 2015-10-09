@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 public class WeatherProvider extends ContentProvider
 {
@@ -158,6 +159,9 @@ public class WeatherProvider extends ContentProvider
   private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder)
   {
     String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
+
+Log.d(WeatherProvider.class.getName(), "Getting weather by location: " + locationSetting);
+
     long startDate = WeatherContract.WeatherEntry.getStartDateFromUri(uri);
 
     String[] selectionArgs;
@@ -350,6 +354,7 @@ public class WeatherProvider extends ContentProvider
         if (_id > 0)
         {
           returnUri = WeatherContract.LocationEntry.buildLocationUri(_id);
+Log.d(WeatherProvider.class.getName(), "Adding location, new URI: " + returnUri);
         }
         else
         {

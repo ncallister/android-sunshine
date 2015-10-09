@@ -76,6 +76,7 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
       uriBuilder.appendQueryParameter("cnt", "7");
       Uri uri = uriBuilder.build();
 
+      Log.d(GetForecastAsyncTask.class.getName(), "Loading forecasts: (" + locationSetting + ") -> " + uri.toString());
       URL url = new URL(uri.toString());
 
       // Create the request to OpenWeatherMap, and open the connection
@@ -139,6 +140,7 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
     {
       if (forecastJsonStr != null)
       {
+        Log.d(GetForecastAsyncTask.class.getName(), "Forecast data loaded for: " + locationSetting);
         return forecastDecoder.parseForecast(forecastJsonStr, locationSetting);
       }
     }

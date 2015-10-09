@@ -63,13 +63,17 @@ public class ForecastFragment extends Fragment
         Intent displayDetailIntent = new Intent(getActivity(), DetailActivity.class);
         ForecastData data = forecastDataAdapter.getItem(position);
         displayDetailIntent.setData(
-            WeatherContract.WeatherEntry.buildWeatherUri(data.getDatabaseId()));
+            WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                data.getLocation().getLocationSetting(), data.getTimestamp()));
         getActivity().startActivity(displayDetailIntent);
       }
     });
 
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
     loader = new ForecastDataCursorLoader(getContext(), getLoaderManager(),
-                                          WeatherContract.WeatherEntry.CONTENT_URI,
+                                          WeatherContract.WeatherEntry.buildWeatherLocation(
+                                              preferences.getString(getString(R.string.pref_key_location),
+                                                                    getString(R.string.pref_default_location))),
                                           forecastDataAdapter);
     loader.initLoader();
 

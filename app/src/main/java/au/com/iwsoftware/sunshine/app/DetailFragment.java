@@ -2,7 +2,6 @@ package au.com.iwsoftware.sunshine.app;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,20 +20,24 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import au.com.iwsoftware.sunshine.app.forecast.ForecastData;
+import au.com.iwsoftware.sunshine.app.forecast.ForecastDataCursorLoader;
+import au.com.iwsoftware.sunshine.app.forecast.ForecastDataLoaderListener;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastRenderer;
-import au.com.iwsoftware.sunshine.app.forecast.WeatherDbForecastDataCodec;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class DetailFragment extends Fragment
+public class DetailFragment extends Fragment implements ForecastDataLoaderListener
 {
   private Map<String, Drawable> art = null;
   private ShareActionProvider shareActionProvider = null;
   private ForecastData forecast = null;
+  private View rootView;
+  private ForecastDataCursorLoader loader;
 
   public DetailFragment()
   {
@@ -51,35 +54,18 @@ public class DetailFragment extends Fragment
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
   {
     Log.v(DetailFragment.class.getSimpleName(), "onCreateView");
-    View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+    rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
     initArt();
+    clearForecast(rootView);
 
-    forecast = getForecastData();
-    displayForecast(forecast, rootView);
-
-    updateShare();
-
-    return rootView;
-  }
-
-  private ForecastData getForecastData()
-  {
     Uri forecastUri = getActivity().getIntent().getData();
     Log.d(DetailFragment.class.getName(), "URI: " + forecast);
-    WeatherDbForecastDataCodec codec = new WeatherDbForecastDataCodec();
-    Cursor cursor = getContext().getContentResolver().query(forecastUri,
-                                                            WeatherDbForecastDataCodec.getFullProjection(),
-                                                            null, null, null);
-    try
-    {
-      cursor.moveToFirst();
-      return codec.decode(cursor, getContext().getContentResolver());
-    }
-    finally
-    {
-      cursor.close();
-    }
+
+    loader = new ForecastDataCursorLoader(getContext(), getLoaderManager(), forecastUri, this);
+    loader.initLoader();
+
+    return rootView;
   }
 
   private void initArt()
@@ -153,9 +139,38 @@ public class DetailFragment extends Fragment
         art.get(data.getWeatherDescription().toLowerCase()));
   }
 
+  private void clearForecast(View rootView)
+  {
+    ((TextView) rootView.findViewById(R.id.textview_day_of_week)).setText("");
+    ((TextView) rootView.findViewById(R.id.textview_date)).setText("");
+    ((TextView) rootView.findViewById(R.id.textview_max)).setText("");
+    ((TextView) rootView.findViewById(R.id.textview_min)).setText("");
+    ((TextView) rootView.findViewById(R.id.textview_description)).setText("");
+    ((TextView) rootView.findViewById(R.id.textview_humidity)).setText("");
+    ((TextView) rootView.findViewById(R.id.textview_pressure)).setText("");
+    ((TextView) rootView.findViewById(R.id.textview_wind)).setText("");
+
+    ((ImageView) rootView.findViewById(R.id.imageview_icon)).setImageDrawable(null);
+  }
+
   private String getWindDirection(int degrees)
   {
     String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"};
     return directions[(int) Math.round((((double) degrees % 360) / 45))];
+  }
+
+  @Override
+  public void forecastDataLoaded(List<ForecastData> data)
+  {
+    forecast = data.get(0);
+    displayForecast(forecast, rootView);
+
+    updateShare();
+  }
+
+  @Override
+  public void forecastDataReset()
+  {
+    clearForecast(rootView);
   }
 }

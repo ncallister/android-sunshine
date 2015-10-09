@@ -1,7 +1,6 @@
 package au.com.iwsoftware.sunshine.app.forecast;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,7 @@ import java.util.List;
 /**
  *
  */
-public class ForecastDataAdapter extends BaseAdapter
+public class ForecastDataAdapter extends BaseAdapter implements ForecastDataLoaderListener
 {
   private List<ForecastData> data;
 
@@ -69,14 +68,6 @@ public class ForecastDataAdapter extends BaseAdapter
     notifyDataSetChanged();
   }
 
-  public void updateFromCursor(Cursor cursor)
-  {
-    WeatherDbForecastDataCodec codec = new WeatherDbForecastDataCodec();
-    List<ForecastData> allData = codec.decodeAll(cursor, context.getContentResolver());
-    clear();
-    addAll(allData);
-  }
-
   @Override
   public View getView(int position, View convertView, ViewGroup parent)
   {
@@ -123,5 +114,18 @@ public class ForecastDataAdapter extends BaseAdapter
     text.setText(renderer.renderSummary(this.context, item, 1));
 
     return view;
+  }
+
+  @Override
+  public void forecastDataLoaded(List<ForecastData> data)
+  {
+    clear();
+    addAll(data);
+  }
+
+  @Override
+  public void forecastDataReset()
+  {
+    clear();
   }
 }
