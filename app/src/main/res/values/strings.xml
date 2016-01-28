@@ -36,4 +36,7 @@
 
   <string name="pref_entry_units_metric">Metric</string>
   <string name="pref_entry_units_imperial">Imperial</string>
+
+  <string name="pref_title_API_key">API Key</string>
+  <string name="pref_key_API_key">api-key</string>
 </resources>

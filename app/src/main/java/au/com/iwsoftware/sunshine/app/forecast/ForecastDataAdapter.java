@@ -11,7 +11,12 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
+ * ForecastDataAdapter is an adapter that can be used to populate lists etc which specifically
+ * operates on ForecastData objects.
  *
+ * It can be populated and controlled manually using methods like {@link #clear()} and
+ * {@link #add(ForecastData)} or provided to a {@link ForecastDataCursorLoader} to be dynamically
+ * populated from a cursor data source.
  */
 public class ForecastDataAdapter extends BaseAdapter implements ForecastDataLoaderListener
 {

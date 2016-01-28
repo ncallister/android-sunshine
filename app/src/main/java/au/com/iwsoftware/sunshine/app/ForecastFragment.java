@@ -99,7 +99,9 @@ public class ForecastFragment extends Fragment
 
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-    new GetForecastAsyncTask(getContext().getContentResolver()).execute(
+    new GetForecastAsyncTask(getContext().getContentResolver(),
+                             preferences.getString(getString(R.string.pref_key_API_key),
+                                                   null)).execute(
         preferences.getString(getString(R.string.pref_key_location),
                               getString(R.string.pref_default_location)));
   }

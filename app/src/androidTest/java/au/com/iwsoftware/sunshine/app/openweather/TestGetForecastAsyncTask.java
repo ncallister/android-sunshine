@@ -47,7 +47,7 @@ public class TestGetForecastAsyncTask extends AndroidTestCase
                                                  " = ?",
                                              new String[]{ADD_LOCATION_SETTING});
 
-    GetForecastAsyncTask fwt = new GetForecastAsyncTask(getContext().getContentResolver());
+    GetForecastAsyncTask fwt = new GetForecastAsyncTask(getContext().getContentResolver(), null);
     Location location = new Location();
     location.setLocationSetting(ADD_LOCATION_SETTING);
     location.setCityName(ADD_LOCATION_CITY);

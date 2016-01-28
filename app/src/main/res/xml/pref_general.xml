@@ -14,4 +14,12 @@
     android:key="@string/pref_key_units"
     android:title="@string/pref_title_units"
     />
+
+  <EditTextPreference
+    android:inputType="text"
+    android:key="@string/pref_key_API_key"
+    android:selectAllOnFocus="true"
+    android:singleLine="true"
+    android:title="@string/pref_title_API_key"
+    />
 </PreferenceScreen>

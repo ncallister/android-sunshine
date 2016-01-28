@@ -38,7 +38,9 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
   private WeatherDbForecastDataCodec forecastCodec;
   private LocationDbLocationCodec locationCodec;
 
-  public GetForecastAsyncTask(ContentResolver context)
+  private String APIKEY = null;
+
+  public GetForecastAsyncTask(ContentResolver context, String APIKEY)
   {
     this.contentResolver = context;
 
@@ -46,6 +48,7 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
 
     this.forecastCodec = new WeatherDbForecastDataCodec();
     this.locationCodec = new LocationDbLocationCodec();
+    this.APIKEY = APIKEY;
   }
 
   @Override
@@ -74,6 +77,7 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
       uriBuilder.appendQueryParameter("mode", "json");
       uriBuilder.appendQueryParameter("units", "metric");
       uriBuilder.appendQueryParameter("cnt", "7");
+      uriBuilder.appendQueryParameter("APPID", APIKEY);
       Uri uri = uriBuilder.build();
 
       Log.d(GetForecastAsyncTask.class.getName(), "Loading forecasts: (" + locationSetting + ") -> " + uri.toString());

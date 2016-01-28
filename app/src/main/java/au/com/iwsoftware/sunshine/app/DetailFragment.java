@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -84,12 +85,16 @@ public class DetailFragment extends Fragment implements ForecastDataLoaderListen
     }
   }
 
+  private MenuItem shareMenuItem;
+
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
   {
     Log.v(DetailFragment.class.getSimpleName(), "onCreateOptionsMenu");
     // Inflate the menu; this adds items to the action bar if it is present.
     inflater.inflate(R.menu.menu_detail_fragment, menu);
+
+    shareMenuItem = menu.findItem(R.id.action_share);
 
     shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
         menu.findItem(R.id.action_share));
@@ -109,6 +114,11 @@ public class DetailFragment extends Fragment implements ForecastDataLoaderListen
       shareIntent.putExtra(Intent.EXTRA_TEXT,
                            renderer.renderSummary(getActivity(), forecast, 1) + " #SunshineApp");
       shareActionProvider.setShareIntent(shareIntent);
+      shareMenuItem.setEnabled(true);
+    }
+    else
+    {
+      shareMenuItem.setEnabled(false);
     }
   }
 
