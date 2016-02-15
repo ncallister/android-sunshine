@@ -37,6 +37,7 @@ public class WeatherProvider extends ContentProvider
   static final int WEATHER_WITH_LOCATION_AND_DATE = 102;
   static final int LOCATION = 300;
   static final int LOCATION_WITH_ID = 301;
+  static final int LOCATION_WITH_SETTING = 302;
 
   private static final SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
   private static final SQLiteQueryBuilder sLocationQueryBuilder;
@@ -70,15 +71,15 @@ public class WeatherProvider extends ContentProvider
   private static final String sWeatherIDSelection =
       WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID + " = ? ";
 
-  //location.location_setting = ?
-  private static final String sLocationSettingSelection =
-      WeatherContract.LocationEntry.TABLE_NAME +
-          "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? ";
-
   //location._id = ?
   private static final String sLocationIDSelection =
       WeatherContract.LocationEntry.TABLE_NAME +
           "." + WeatherContract.LocationEntry._ID + " = ? ";
+
+  //location.location_setting = ?
+  private static final String sLocationSettingSelection =
+      WeatherContract.LocationEntry.TABLE_NAME +
+          "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? ";
 
   //location.location_setting = ? AND date >= ?
   private static final String sLocationSettingWithStartDateSelection =
@@ -92,7 +93,7 @@ public class WeatherProvider extends ContentProvider
           "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
           WeatherContract.WeatherEntry.COLUMN_DATE + " = ? ";
 
-  private Cursor getAllLocations(Uri uri, String[] projection, String sortOrder)
+  private Cursor getLocations(Uri uri, String[] projection, String sortOrder)
   {
     return sLocationQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                                        projection,
@@ -105,6 +106,18 @@ public class WeatherProvider extends ContentProvider
   }
 
   private Cursor getLocationById(Uri uri, String[] projection, String sortOrder)
+  {
+    String setting = WeatherContract.LocationEntry.getLocationSettingFromUri(uri);
+    return sLocationQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                                       projection,
+                                       sLocationSettingSelection,
+                                       new String[]{String.valueOf(setting)},
+                                       null,
+                                       null,
+                                       sortOrder);
+  }
+
+  private Cursor getLocationBySetting(Uri uri, String[] projection, String sortOrder)
   {
     long locationId = WeatherContract.LocationEntry.getLocationIdFromUri(uri);
     return sLocationQueryBuilder.query(mOpenHelper.getReadableDatabase(),
@@ -232,14 +245,13 @@ Log.d(WeatherProvider.class.getName(), "Getting weather by location: " + locatio
     matcher.addURI(WeatherContract.CONTENT_AUTHORITY,
                    WeatherContract.PATH_LOCATION + "/#",
                    LOCATION_WITH_ID);
+    matcher.addURI(WeatherContract.CONTENT_AUTHORITY,
+                   WeatherContract.PATH_LOCATION + "/*",
+                   LOCATION_WITH_SETTING);
 
     return matcher;
   }
 
-  /*
-      Students: We've coded this for you.  We just create a new WeatherDbHelper for later use
-      here.
-   */
   @Override
   public boolean onCreate()
   {
@@ -267,6 +279,12 @@ Log.d(WeatherProvider.class.getName(), "Getting weather by location: " + locatio
       case LOCATION:
         // Location directory
         return WeatherContract.LocationEntry.CONTENT_TYPE;
+      case LOCATION_WITH_ID:
+        // Single Location
+        return WeatherContract.LocationEntry.CONTENT_ITEM_TYPE;
+      case LOCATION_WITH_SETTING:
+        // Single Location
+        return WeatherContract.LocationEntry.CONTENT_ITEM_TYPE;
       default:
         throw new UnsupportedOperationException("Unknown uri: " + uri);
     }
@@ -308,7 +326,7 @@ Log.d(WeatherProvider.class.getName(), "Getting weather by location: " + locatio
       // "location"
       case LOCATION:
       {
-        retCursor = getAllLocations(uri, projection, sortOrder);
+        retCursor = getLocations(uri, projection, sortOrder);
         break;
       }
       // "location/#"

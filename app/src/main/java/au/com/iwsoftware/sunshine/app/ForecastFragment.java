@@ -99,6 +99,9 @@ public class ForecastFragment extends Fragment
 
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
+    Log.d(ForecastFragment.class.getName(), "Location preference: " + preferences.getString(
+        getString(R.string.pref_key_location), "INVALID"));
+
     new GetForecastAsyncTask(getContext().getContentResolver(),
                              preferences.getString(getString(R.string.pref_key_API_key),
                                                    null)).execute(

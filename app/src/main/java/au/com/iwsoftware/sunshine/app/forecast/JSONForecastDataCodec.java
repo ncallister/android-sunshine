@@ -6,6 +6,8 @@ import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
 
+import au.com.iwsoftware.sunshine.app.openweather.OpenWeatherIcon;
+
 /**
  *
  */
@@ -19,6 +21,7 @@ public class JSONForecastDataCodec
   public static final String LABEL_HUMIDITY = "humidity";
   public static final String LABEL_WEATHER_OBJECT = "weather";
   public static final String LABEL_WEATHER_DESCRIPTION = "main";
+  public static final String LABEL_WEATHER_ICON = "icon";
   public static final String LABEL_WEATHER_ID = "id";
   public static final String LABEL_WIND_SPEED = "speed";
   public static final String LABEL_WIND_DIRECTION = "deg";
@@ -49,6 +52,7 @@ public class JSONForecastDataCodec
   {
     data.setWeatherDescription(weather.getString(LABEL_WEATHER_DESCRIPTION));
     data.setWeatherId(weather.getInt(LABEL_WEATHER_ID));
+    data.setWeatherIcon(OpenWeatherIcon.getIconByCode(weather.getString(LABEL_WEATHER_ICON)));
   }
 
   public JSONObject encodeForecast(ForecastData data) throws JSONException

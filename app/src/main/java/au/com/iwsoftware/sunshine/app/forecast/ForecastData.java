@@ -3,6 +3,7 @@ package au.com.iwsoftware.sunshine.app.forecast;
 import java.text.SimpleDateFormat;
 
 import au.com.iwsoftware.sunshine.app.location.Location;
+import au.com.iwsoftware.sunshine.app.openweather.OpenWeatherIcon;
 
 /**
  *
@@ -15,6 +16,7 @@ public class ForecastData
   private long timestamp;
   private String weatherDescription;
   private int weatherId;
+  private OpenWeatherIcon weatherIcon;
   private double maxKelvin;
   private double minKelvin;
   private double pressure;
@@ -174,5 +176,15 @@ public class ForecastData
   public void setDatabaseId(int databaseId)
   {
     this.databaseId = databaseId;
+  }
+
+  public OpenWeatherIcon getWeatherIcon()
+  {
+    return weatherIcon;
+  }
+
+  public void setWeatherIcon(OpenWeatherIcon weatherIcon)
+  {
+    this.weatherIcon = weatherIcon;
   }
 }

@@ -31,6 +31,7 @@ public class SettingsActivity extends PreferenceActivity
     // updated when the preference changes.
     bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_location)));
     bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_units)));
+    bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_API_key)));
   }
 
   /**

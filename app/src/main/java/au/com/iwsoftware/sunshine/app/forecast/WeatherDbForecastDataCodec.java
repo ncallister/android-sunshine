@@ -11,6 +11,7 @@ import java.util.Map;
 
 import au.com.iwsoftware.sunshine.app.data.WeatherContract;
 import au.com.iwsoftware.sunshine.app.location.LocationDbLocationCodec;
+import au.com.iwsoftware.sunshine.app.openweather.OpenWeatherIcon;
 
 /**
  *
@@ -243,6 +244,31 @@ public class WeatherDbForecastDataCodec
                                     ContentResolver contentResolver)
                  {
                    data.setWeatherId(dbCursor.getInt(columnIndex));
+                 }
+               });
+
+    PROJECTION.add(WeatherContract.WeatherEntry.COLUMN_WEATHER_ICON);
+    fields.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ICON,
+               new FieldCodec()
+               {
+                 @Override
+                 public void encode(ForecastData data, ContentValues values)
+                 {
+                   if (data.getWeatherIcon() != null)
+                   {
+                     values.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ICON,
+                                data.getWeatherIcon().name());
+                   }
+                 }
+
+                 @Override
+                 public void decode(Cursor dbCursor, int columnIndex, ForecastData data,
+                                    ContentResolver contentResolver)
+                 {
+                   if (!dbCursor.isNull(columnIndex))
+                   {
+                     data.setWeatherIcon(OpenWeatherIcon.valueOf(dbCursor.getString(columnIndex)));
+                   }
                  }
                });
   }

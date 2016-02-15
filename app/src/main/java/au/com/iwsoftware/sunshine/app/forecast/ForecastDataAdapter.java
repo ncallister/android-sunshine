@@ -124,6 +124,11 @@ public class ForecastDataAdapter extends BaseAdapter implements ForecastDataLoad
   @Override
   public void forecastDataLoaded(List<ForecastData> data)
   {
+    Log.d(ForecastDataAdapter.class.getName(), "Forecast data loaded");
+    for (ForecastData forecast : data)
+    {
+      Log.d(ForecastDataAdapter.class.getName(), forecast.toString());
+    }
     clear();
     addAll(data);
   }

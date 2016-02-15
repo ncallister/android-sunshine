@@ -21,6 +21,8 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.format.Time;
 
+import java.util.List;
+
 /**
  * Defines table and column names for the weather database.
  */
@@ -99,6 +101,17 @@ public class WeatherContract
     {
       return ContentUris.parseId(uri);
     }
+
+    public static Uri buildLocationWithSettingUri(String setting)
+    {
+      return CONTENT_URI.buildUpon().appendPath(setting).build();
+    }
+
+    public static String getLocationSettingFromUri(Uri uri)
+    {
+      List<String> path = uri.getPathSegments();
+      return path.get(path.size() - 1);
+    }
   }
 
   /* Inner class that defines the table contents of the weather table */
@@ -123,6 +136,8 @@ public class WeatherContract
     public static final String COLUMN_DATE = "date";
     // Weather id as returned by API, to identify the icon to be used
     public static final String COLUMN_WEATHER_ID = "weather_id";
+    // The weather icon code
+    public static final String COLUMN_WEATHER_ICON = "weather_icon";
 
     // Short description and long description of the weather, as provided by API.
     // e.g "clear" vs "sky is clear".

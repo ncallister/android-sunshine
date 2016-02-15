@@ -158,16 +158,13 @@ public class GetForecastAsyncTask extends AsyncTask<String, Void, List<ForecastD
   void syncLocationToDatabase(Location location)
   {
     Cursor cursor = contentResolver.query(
-        WeatherContract.LocationEntry.CONTENT_URI,
+        WeatherContract.LocationEntry.buildLocationWithSettingUri(location.getLocationSetting()),
         new String[]
             {
                 WeatherContract.LocationEntry._ID,
             },
-        WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + "=? ",
-        new String[]
-            {
-                location.getLocationSetting(),
-            },
+        null,
+        null,
         null);
     try
     {

@@ -28,13 +28,14 @@ import au.com.iwsoftware.sunshine.app.forecast.ForecastData;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastDataCursorLoader;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastDataLoaderListener;
 import au.com.iwsoftware.sunshine.app.forecast.ForecastRenderer;
+import au.com.iwsoftware.sunshine.app.openweather.OpenWeatherIcon;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class DetailFragment extends Fragment implements ForecastDataLoaderListener
 {
-  private Map<String, Drawable> art = null;
+  private Map<OpenWeatherIcon, Drawable> art = null;
   private ShareActionProvider shareActionProvider = null;
   private ForecastData forecast = null;
   private View rootView;
@@ -75,13 +76,16 @@ public class DetailFragment extends Fragment implements ForecastDataLoaderListen
     {
       art = new HashMap<>();
       Resources res = getResources();
-      art.put("clear", res.getDrawable(R.drawable.art_clear));
-      art.put("clouds", res.getDrawable(R.drawable.art_clouds));
-      art.put("fog", res.getDrawable(R.drawable.art_fog));
-      art.put("light clouds", res.getDrawable(R.drawable.art_light_clouds));
-      art.put("light rain", res.getDrawable(R.drawable.art_light_rain));
-      art.put("snow", res.getDrawable(R.drawable.art_snow));
-      art.put("storm", res.getDrawable(R.drawable.art_storm));
+
+      art.put(OpenWeatherIcon.CLEAR, res.getDrawable(R.drawable.art_clear));
+      art.put(OpenWeatherIcon.FEW_CLOUDS, res.getDrawable(R.drawable.art_light_clouds));
+      art.put(OpenWeatherIcon.SCATTERED_CLOUDS, res.getDrawable(R.drawable.art_clouds));
+      art.put(OpenWeatherIcon.BROKEN_CLOUDS, res.getDrawable(R.drawable.art_clouds));
+      art.put(OpenWeatherIcon.DRIZZLE, res.getDrawable(R.drawable.art_light_rain));
+      art.put(OpenWeatherIcon.RAIN, res.getDrawable(R.drawable.art_rain));
+      art.put(OpenWeatherIcon.THUNDERSTORM, res.getDrawable(R.drawable.art_storm));
+      art.put(OpenWeatherIcon.SNOW, res.getDrawable(R.drawable.art_snow));
+      art.put(OpenWeatherIcon.MIST, res.getDrawable(R.drawable.art_fog));
     }
   }
 
@@ -114,9 +118,12 @@ public class DetailFragment extends Fragment implements ForecastDataLoaderListen
       shareIntent.putExtra(Intent.EXTRA_TEXT,
                            renderer.renderSummary(getActivity(), forecast, 1) + " #SunshineApp");
       shareActionProvider.setShareIntent(shareIntent);
-      shareMenuItem.setEnabled(true);
+      if (shareMenuItem != null)
+      {
+        shareMenuItem.setEnabled(true);
+      }
     }
-    else
+    else if (shareMenuItem != null)
     {
       shareMenuItem.setEnabled(false);
     }
@@ -145,8 +152,9 @@ public class DetailFragment extends Fragment implements ForecastDataLoaderListen
     ((TextView) rootView.findViewById(R.id.textview_wind)).setText(getString(
         R.string.format_wind, data.getWindSpeed(), getWindDirection(data.getWindDir())));
 
+    Log.d(DetailFragment.class.getName(), "Icon: " + data.getWeatherIcon());
     ((ImageView) rootView.findViewById(R.id.imageview_icon)).setImageDrawable(
-        art.get(data.getWeatherDescription().toLowerCase()));
+        art.get(data.getWeatherIcon()));
   }
 
   private void clearForecast(View rootView)
